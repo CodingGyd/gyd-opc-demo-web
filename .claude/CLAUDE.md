@@ -1,7 +1,8 @@
-# CLAUDE.md — gyd-opc-noteapp-web
+# CLAUDE.md — gyd-opc-demo-web
 
 ## 项目概述
-OnePlatform 笔记本演示产品（gyd-opc-noteapp-web），基于 Vue 3 + Vite + Pinia + TypeScript。
+OnePlatform 网站产品接入示例前端（gyd-opc-demo-web），基于 Vue 3 + Vite + Pinia + TypeScript。
+作为平台标准接入案例，展示前端产品如何对接 OnePlatform 基础能力服务。
 
 ## 技术栈
 - Vue 3 + Composition API
@@ -21,24 +22,23 @@ OnePlatform 笔记本演示产品（gyd-opc-noteapp-web），基于 Vue 3 + Vite
 
 ## 关键文件
 - `Dockerfile` — Docker 镜像构建，产出 nginx 容器
-- `nginx.conf` — nginx 配置，代理 `/api/` 到 Gateway 并注入 `X-Product-Key` 请求头
+- `nginx.conf` — nginx 配置，代理 `/api/` 到 gateway 并注入 `X-Product-Key` 请求头
 - `vite.config.ts` — Vite 开发配置，dev proxy 注入 `X-Product-Key` 请求头
 
 ## productKey 注入机制
 - **productKey 不在前端代码中**，前端 API 层（src/api/request.ts）不携带 productKey
-- 开发环境：Vite dev proxy（vite.config.ts）在转发请求时自动注入 `X-Product-Key: noteapp` 请求头
-- 生产环境：nginx（nginx.conf）在代理 `/api/` 到 Gateway 时自动注入 `X-Product-Key: noteapp` 请求头
+- 开发环境：Vite dev proxy（vite.config.ts）在转发请求时自动注入 `X-Product-Key: demo-web` 请求头
+- 生产环境：nginx（nginx.conf）在代理 `/api/` 到 gateway 时自动注入 `X-Product-Key: demo-web` 请求头
 - 后端服务从 `X-Product-Key` 请求头读取 productKey，而非请求体
 
 ## 配置
 - 端口：3002
-- productKey：`noteapp`
+- productKey：`demo-web`
 
 ## 对接后端
-- auth-service: 登录注册、用户管理
-- storage-service: 文件上传
-- ai-service: AI对话（SSE流式）
-- analytics-service: 事件埋点上报
+- demo-service: 所有接口通过 demo-service 聚合（登录注册、文件上传、AI对话、埋点上报等）
+- 架构链路：demo-web → gateway → demo-service → 基础能力服务
+- 禁止前端直接调用 auth-service、storage-service 等内部微服务
 
 ## 开发规范
 - 所有请求通过 src/api/request.ts 发起，自动携带 token（productKey 由代理层注入，前端不处理）

@@ -1,6 +1,6 @@
-# gyd-opc-web-template
+# gyd-opc-demo-web
 
-OnePlatform 网页前端模板，基于 Vue 3 + Vite + Pinia + TypeScript。
+OnePlatform 网站产品接入前端示例，基于 Vue 3 + Vite + Pinia + TypeScript。
 
 ## 快速开始
 

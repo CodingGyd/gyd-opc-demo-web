@@ -1,6 +1,6 @@
-# gyd-opc-web-template
+# gyd-opc-demo-web
 
-OnePlatform 网页前端模板。
+OnePlatform 网站产品接入前端示例。
 
 ## 快速开始
 

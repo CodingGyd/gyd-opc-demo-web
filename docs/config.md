@@ -4,13 +4,13 @@
 
 | 变量 | 说明 | 默认值 |
 |------|------|--------|
-| VITE_API_BASE_URL | 后端API地址 | http://localhost:8000 |
+| VITE_API_BASE_URL | 后端API地址 | http://localhost:8010 |
 | VITE_PRODUCT_KEY | 产品标识 | 空 |
 
 ## src/api/request.ts
 
 HTTP 请求封装，基于 axios：
-- 自动携带 Authorization 和 X-Product-Key 请求头
+- 自动携带 Authorization 和 X-Request-Id 请求头（productKey 由 demo-service 侧兜底注入，前端不携带；AI 流式接口 ai.ts 例外，读取 VITE_PRODUCT_KEY）
 - 401 自动跳转登录页
 - 统一错误处理
 

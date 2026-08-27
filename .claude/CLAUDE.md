@@ -21,27 +21,25 @@ OnePlatform 网站产品接入示例前端（gyd-opc-demo-web），基于 Vue 3 
 - `src/router/` — 路由配置
 
 ## 关键文件
-- `Dockerfile` — Docker 镜像构建，产出 nginx 容器
-- `nginx.conf` — nginx 配置，代理 `/api/` 到 gateway 并注入 `X-Product-Key` 请求头
-- `vite.config.ts` — Vite 开发配置，dev proxy 注入 `X-Product-Key` 请求头
+- `vite.config.ts` — Vite 开发配置，dev proxy 将 `/api` 转发到 demo-service（需设置 `VITE_API_BASE_URL`，默认值 8000 为老网关死端口）
+- `Dockerfile` / `nginx.conf` — Docker + Gateway 部署时期遗留（指向已下线的 `gateway:8000`），当前发版不使用；前端实际部署在 180 Nginx（静态目录 html/demo-web，见 16 号 §2.8）
 
-## productKey 注入机制
-- **productKey 不在前端代码中**，前端 API 层（src/api/request.ts）不携带 productKey
-- 开发环境：Vite dev proxy（vite.config.ts）在转发请求时自动注入 `X-Product-Key: demo-web` 请求头
-- 生产环境：nginx（nginx.conf）在代理 `/api/` 到 gateway 时自动注入 `X-Product-Key: demo-web` 请求头
-- 后端服务从 `X-Product-Key` 请求头读取 productKey，而非请求体
+## productKey 机制
+- 常规 API（src/api/request.ts）不携带 productKey，只带 Authorization 和 X-Request-Id
+- demo-service 接收 `X-Product-Key` 请求头，缺省时默认 `demo-web`（AuthProxyController defaultValue），转发 basic-service 时携带
+- AI 流式接口（src/api/ai.ts，fetch 实现）单独读取 `VITE_PRODUCT_KEY` 环境变量并在请求头携带
 
 ## 配置
-- 端口：3002
+- 端口：3001（vite.config.ts）
 - productKey：`demo-web`
 
 ## 对接后端
 - demo-service: 所有接口通过 demo-service 聚合（登录注册、文件上传、AI对话、埋点上报等）
-- 架构链路：demo-web → gateway → demo-service → 基础能力服务
-- 禁止前端直接调用 auth-service、storage-service 等内部微服务
+- 架构链路：demo-web → demo-service（8010，RestTemplate）→ basic-service（8020）；生产环境经 180 Nginx `/api/` 反代到 91:8010，无网关
+- 基础能力（认证/存储/AI/埋点）由 basic-service 统一提供，前端一律通过 demo-service 聚合访问，不直连 basic-service
 
 ## 开发规范
-- 所有请求通过 src/api/request.ts 发起，自动携带 token（productKey 由代理层注入，前端不处理）
+- 所有请求通过 src/api/request.ts 发起，自动携带 token（productKey 由 demo-service 侧兜底注入，前端不处理）
 - 使用 Composition API + setup 语法
 - 组件命名采用 PascalCase
 

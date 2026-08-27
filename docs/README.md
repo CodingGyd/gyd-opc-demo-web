@@ -20,7 +20,7 @@ npm run build
 复制 `.env.example` 为 `.env`，修改后端地址：
 
 ```
-VITE_API_BASE_URL=http://localhost:8000
+VITE_API_BASE_URL=http://localhost:8010
 VITE_PRODUCT_KEY=your_product_key
 ```
 
